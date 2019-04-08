@@ -70,7 +70,7 @@ with floating points but it won't work for anything except the most simple
 problem due to accumulated errors and comparisons with zero.
 """
 function simplex(c::Vector{T}, A::Matrix{T}, b::Vector{T}) where {T<:Rational}
-    @assert all(b .> zero(T))
+    @assert all(b .>= zero(T))
 
     # Set up data structures.
     num_constraints, num_variables = size(A)
@@ -166,5 +166,7 @@ function simplex(c::Vector{T}, A::Matrix{T}, b::Vector{T}) where {T<:Rational}
         basic[leaving] = entering
     end
 end
+
+include("MOI_wrapper.jl")
 
 end  # module RationalSimplex.

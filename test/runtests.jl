@@ -1,6 +1,7 @@
 using Test
 import LinearAlgebra: dot
 using RationalSimplex
+using JuMP
 
 @testset "RationalSimplex" begin
 
@@ -158,5 +159,20 @@ end
       status, x = simplex(c, :Min, M, b, ['=','=','=','=','=','='])
       @test dot(c,x) == 3//28
 end
+
+@testset "JuMP and MOI" begin
+      m = Model(with_optimizer(RationalSimplex.LQOI.DataLinQuadOptimizer, RationalSimplex.Optimizer))
+
+      @variable(m, x >= 0)
+      @variable(m, y >= 1)
+      @constraint(m, x + y >= 3)
+      @objective(m, Min, 2y + x)
+
+      optimize!(m)
+
+      @test value(x) == 2
+      @test value(y) == 1
+end
+
 
 end  # RationalSimplex testset.
